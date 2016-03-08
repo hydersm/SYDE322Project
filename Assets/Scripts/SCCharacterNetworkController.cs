@@ -2,16 +2,19 @@
 using System.Collections;
 using Photon;
 
-public class SCNetworkCharacter : Photon.PunBehaviour {
+public class SCCharacterNetworkController : Photon.PunBehaviour {
 
 	public Material playerMaterial;
+
 	private Vector3 correctPlayerPos;
+	private SCPlayerController playerController;
 
 	// Use this for initialization
 	void Start () {
 		if (this.photonView.isMine) {
-			this.GetComponent<PlayerController> ().enabled = true;
-			this.GetComponent<Renderer>().material = playerMaterial;
+			playerController = GetComponent<SCPlayerController> ();
+			playerController.enabled = true;
+			GetComponent<Renderer>().material = playerMaterial;
 		}
 	}
 
@@ -24,7 +27,10 @@ public class SCNetworkCharacter : Photon.PunBehaviour {
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
 		if (stream.isWriting) {
-			stream.SendNext (transform.position);
+			if (playerController != null) {
+				stream.SendNext (playerController.newestPosition);
+				playerController.delay = (PhotonNetwork.GetPing () * 2.0f) / 1000.0f;
+			}
 		} else {
 			this.correctPlayerPos = (Vector3)stream.ReceiveNext ();
 		}
