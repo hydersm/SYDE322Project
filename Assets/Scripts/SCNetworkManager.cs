@@ -38,8 +38,9 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	}
 
 	public override void OnJoinedRoom() {
-		Vector2 randPos = Random.insideUnitCircle;
+		Vector2 randPos = Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
+		Debug.Log (spawnPos);
 		PhotonNetwork.Instantiate ("SCCar", spawnPos, Quaternion.identity, 0);
 	}
 
