@@ -11,12 +11,14 @@ public class SCTorqueAndSteeringSync : Photon.PunBehaviour {
 	}
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-		if (stream.isWriting) {
-			stream.SendNext (carController.currentMotorTorque);
-			stream.SendNext (carController.currentSteeringAngle);
-		} else {
-			carController.currentMotorTorque = (float)stream.ReceiveNext ();
-			carController.currentSteeringAngle = (float)stream.ReceiveNext ();
+		if (carController != null) {
+			if (stream.isWriting) {
+				stream.SendNext (carController.currentMotorTorque);
+				stream.SendNext (carController.currentSteeringAngle);
+			} else {
+				carController.currentMotorTorque = (float)stream.ReceiveNext ();
+				carController.currentSteeringAngle = (float)stream.ReceiveNext ();
+			}
 		}
 	}
 }
