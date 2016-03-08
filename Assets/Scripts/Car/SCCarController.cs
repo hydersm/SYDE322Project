@@ -13,6 +13,8 @@ public class AxleInfo {
 
 public class SCCarController : Photon.PunBehaviour {
 	public GameObject body;
+	public Camera m_camera;
+
 	public Material playerMaterial;
 	public List<AxleInfo> axleInfos; 
 	public float maxMotorTorque;
@@ -23,6 +25,8 @@ public class SCCarController : Photon.PunBehaviour {
 	public void Start() {
 		if (photonView.isMine) {
 			body.GetComponent<Renderer> ().material = playerMaterial;
+		} else {
+			m_camera.enabled = false;
 		}
 	}
 
