@@ -5,10 +5,13 @@ using Photon;
 public class SCNetworkManager : Photon.PunBehaviour {
 
 	public string gameVersion = "1.0";
+	public int sendRate = 30;
 
 	// Use this for initialization
 	void Start () {
 		//PhotonNetwork.logLevel = PhotonLogLevel.Full;
+		PhotonNetwork.sendRate = sendRate;
+		PhotonNetwork.sendRateOnSerialize = sendRate;
 		PhotonNetwork.ConnectUsingSettings (this.gameVersion);
 	}
 
