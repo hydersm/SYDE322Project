@@ -13,7 +13,7 @@ public class AxleInfo {
 
 public class SCCarController : Photon.PunBehaviour {
 	public GameObject body;
-	public Camera m_camera;
+	public GameObject m_camera;
 
 	public Material playerMaterial;
 	public List<AxleInfo> axleInfos; 
@@ -26,7 +26,7 @@ public class SCCarController : Photon.PunBehaviour {
 		if (photonView.isMine) {
 			body.GetComponent<Renderer> ().material = playerMaterial;
 		} else {
-			m_camera.enabled = false;
+			Destroy (m_camera);
 		}
 	}
 
