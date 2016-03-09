@@ -4,20 +4,26 @@ using Photon;
 
 public class SCTransformSync : Photon.PunBehaviour {
 
+	Vector3 targetPos;
+	Quaternion targetRot;
+
+	public void Update() {
+		if (!photonView.isMine) {
+			transform.position = Vector3.Lerp (transform.position, targetPos, Time.deltaTime * 5);
+			transform.rotation = Quaternion.Lerp (transform.rotation, targetRot, Time.deltaTime * 5);
+		}
+	}
+
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
+
 		if (stream.isWriting) {
 			if (transform != null) {
 				stream.SendNext (transform.position);
 				stream.SendNext (transform.rotation);
 			}
 		} else {
-			Vector3 pos = (Vector3)stream.ReceiveNext ();
-			Quaternion rot = (Quaternion)stream.ReceiveNext ();
-
-			if ((transform.position - pos).magnitude > 9) {
-				transform.position = pos;
-				transform.rotation = rot;
-			}
+			targetPos = (Vector3)stream.ReceiveNext ();
+			targetRot = (Quaternion)stream.ReceiveNext ();
 		}
 	}
 
