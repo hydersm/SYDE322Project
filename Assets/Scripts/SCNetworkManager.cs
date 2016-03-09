@@ -41,7 +41,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 		Vector2 randPos = Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
 		Debug.Log (spawnPos);
-		PhotonNetwork.Instantiate ("SCCar", spawnPos, Quaternion.identity, 0);
+		PhotonNetwork.Instantiate ("SCCar3", spawnPos, Quaternion.identity, 0);
 	}
 
 	public void OnDisable() {

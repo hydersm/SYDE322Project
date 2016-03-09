@@ -21,13 +21,17 @@ public class SCCarController : Photon.PunBehaviour {
 	public float maxSteeringAngle;
 	public float currentMotorTorque;
 	public float currentSteeringAngle;
+	private Rigidbody rigidBody;
 
 	public void Start() {
 		if (photonView.isMine) {
-			body.GetComponent<Renderer> ().material = playerMaterial;
+			Material[] playerMaterials = { playerMaterial, playerMaterial };
+			body.GetComponent<Renderer> ().materials = playerMaterials;
 		} else {
 			Destroy (m_camera);
 		}
+
+		rigidBody = GetComponent<Rigidbody> ();
 	}
 
 	public void FixedUpdate()
@@ -48,6 +52,13 @@ public class SCCarController : Photon.PunBehaviour {
 			}
 			ApplyLocalPositionToVisuals(axleInfo.leftWheel);
 			ApplyLocalPositionToVisuals(axleInfo.rightWheel);
+		}
+
+		if (Input.GetButtonDown("Flip") && photonView.isMine){
+			rigidBody.angularVelocity = Vector3.zero;
+			rigidBody.velocity = Vector3.zero;
+			transform.position += Vector3.up;
+			transform.LookAt(transform.position + transform.TransformDirection(Vector3.forward), Vector3.up);
 		}
 	}
 
