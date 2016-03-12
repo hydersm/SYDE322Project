@@ -13,9 +13,7 @@ public class AxleInfo {
 
 public class SCCarController : Photon.PunBehaviour {
 	public GameObject body;
-	public GameObject m_camera;
 
-	public Material playerMaterial;
 	public List<AxleInfo> axleInfos; 
 	public float maxMotorTorque;
 	public float maxSteeringAngle;
@@ -29,13 +27,6 @@ public class SCCarController : Photon.PunBehaviour {
 	private float oldRotation;
 
 	public void Start() {
-		if (photonView.isMine) {
-			Material[] playerMaterials = { playerMaterial, playerMaterial };
-			body.GetComponent<Renderer> ().materials = playerMaterials;
-		} else {
-			Destroy (m_camera);
-		}
-
 		rigidBody = GetComponent<Rigidbody> ();
 	}
 

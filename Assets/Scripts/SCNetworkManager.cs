@@ -6,6 +6,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 
 	public string gameVersion = "1.0";
 	public int sendRate = 30;
+	public SCCameraRootController mainCameraRootController;
 
 	// Use this for initialization
 	void Start () {
@@ -38,10 +39,38 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	}
 
 	public override void OnJoinedRoom() {
+
+		if (PhotonNetwork.playerList.Length > 6) {
+			PhotonNetwork.Disconnect ();
+		}
+
+		int randomColor = 0;
+		System.Random rnd = new System.Random ();
+
+		while (true) {
+			randomColor = rnd.Next (0, 6);
+			bool found = false;
+
+			foreach (PhotonPlayer player in PhotonNetwork.playerList) {
+				if (player != PhotonNetwork.player) {
+					found = (int)player.customProperties ["color"] == randomColor;	
+				}
+			}
+
+			if (!found) {
+				Debug.Log (string.Format("Found color: {0}", randomColor));
+				break;
+			}
+		}
+
+		ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable ();
+		hash ["color"] = randomColor;
+		PhotonNetwork.player.SetCustomProperties (hash);
+
 		Vector2 randPos = Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
-		Debug.Log (spawnPos);
-		PhotonNetwork.Instantiate ("SCCar3", spawnPos, Quaternion.identity, 0);
+		GameObject newCar = PhotonNetwork.Instantiate ("SCCar3", spawnPos, Quaternion.identity, 0);
+
 	}
 
 	public void OnDisable() {
