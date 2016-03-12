@@ -21,6 +21,7 @@ public class SCCarController : Photon.PunBehaviour {
 	public float maxSteeringAngle;
 	public float currentMotorTorque;
 	public float currentSteeringAngle;
+	public float downForce = 1;
 	private Rigidbody rigidBody;
 
 	public void Start() {
@@ -60,6 +61,8 @@ public class SCCarController : Photon.PunBehaviour {
 			transform.position += Vector3.up;
 			transform.LookAt(transform.position + transform.TransformDirection(Vector3.forward), Vector3.up);
 		}
+
+		AddDownForce ();
 	}
 
 	// finds the corresponding visual wheel
@@ -78,5 +81,10 @@ public class SCCarController : Photon.PunBehaviour {
 
 		visualWheel.transform.position = position;
 		visualWheel.transform.rotation = rotation;
+	}
+
+	//to add more grip as speed increases
+	public void AddDownForce() {
+		rigidBody.AddForce (-transform.up * downForce * rigidBody.velocity.magnitude);
 	}
 }
