@@ -2,7 +2,7 @@
 using System.Collections;
 using Photon;
 
-public class SCTransformSync : Photon.PunBehaviour {
+public class SCInterpSync : Photon.PunBehaviour {
 
 	Vector3 targetPos;
 	Quaternion targetRot;

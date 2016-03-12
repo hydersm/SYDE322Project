@@ -22,7 +22,11 @@ public class SCCarController : Photon.PunBehaviour {
 	public float currentMotorTorque;
 	public float currentSteeringAngle;
 	public float downForce = 1;
+	public float frictionStiffness = 0.5f;
+	public float steerHelper = 0.5f;
+
 	private Rigidbody rigidBody;
+	private float oldRotation;
 
 	public void Start() {
 		if (photonView.isMine) {
@@ -63,6 +67,8 @@ public class SCCarController : Photon.PunBehaviour {
 		}
 
 		AddDownForce ();
+		SetWheelFrictionProperties ();
+		SteerHelper ();
 	}
 
 	// finds the corresponding visual wheel
@@ -86,5 +92,42 @@ public class SCCarController : Photon.PunBehaviour {
 	//to add more grip as speed increases
 	public void AddDownForce() {
 		rigidBody.AddForce (-transform.up * downForce * rigidBody.velocity.magnitude);
+	}
+
+	public void SetWheelFrictionProperties() {
+		foreach (AxleInfo axleInfo in axleInfos) {
+			WheelFrictionCurve f = axleInfo.leftWheel.forwardFriction;
+			f.stiffness = frictionStiffness;
+			axleInfo.leftWheel.forwardFriction = f;
+			axleInfo.rightWheel.forwardFriction = f;
+
+			WheelFrictionCurve s = axleInfo.leftWheel.sidewaysFriction;
+			s.stiffness = frictionStiffness;
+			axleInfo.leftWheel.sidewaysFriction = s;
+			axleInfo.rightWheel.sidewaysFriction = s;
+		}
+	}
+
+	public void SteerHelper() {
+		foreach (AxleInfo axleInfo in axleInfos) {
+			WheelHit wheelhit;
+			axleInfo.leftWheel.GetGroundHit (out wheelhit);
+			if (wheelhit.normal == Vector3.zero) {
+				return;
+			}
+
+			axleInfo.rightWheel.GetGroundHit (out wheelhit);
+			if (wheelhit.normal == Vector3.zero) {
+				return;
+			}
+
+			if (Mathf.Abs(oldRotation - transform.eulerAngles.y) < 10f)
+			{
+				var turnadjust = (transform.eulerAngles.y - oldRotation) * steerHelper;
+				Quaternion velRotation = Quaternion.AngleAxis(turnadjust, Vector3.up);
+				rigidBody.velocity = velRotation * rigidBody.velocity;
+			}
+			oldRotation = transform.eulerAngles.y;
+		}
 	}
 }
