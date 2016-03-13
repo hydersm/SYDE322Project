@@ -9,8 +9,8 @@ public class SCInterpSync : Photon.PunBehaviour {
 
 	public void Update() {
 		if (!photonView.isMine) {
-			transform.position = Vector3.Lerp (transform.position, targetPos, Time.deltaTime * 5);
-			transform.rotation = Quaternion.Lerp (transform.rotation, targetRot, Time.deltaTime * 5);
+			transform.position = Vector3.Lerp (transform.position, targetPos, Time.deltaTime * 3);
+			transform.rotation = Quaternion.Lerp (transform.rotation, targetRot, Time.deltaTime * 3);
 		}
 	}
 
