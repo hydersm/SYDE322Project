@@ -18,11 +18,11 @@ public class SCExterpSync : Photon.PunBehaviour {
 			if (stream.isWriting) {
 				stream.SendNext (carController.currentMotorTorque);
 				stream.SendNext (carController.currentSteeringAngle);
-				stream.SendNext (rigidBody.velocity);
+//				stream.SendNext (rigidBody.velocity);
 			} else {
 				carController.currentMotorTorque = (float)stream.ReceiveNext ();
 				carController.currentSteeringAngle = (float)stream.ReceiveNext ();
-				rigidBody.velocity = (Vector3)stream.ReceiveNext ();
+//				rigidBody.velocity = (Vector3)stream.ReceiveNext ();
 			}
 		}
 	}
