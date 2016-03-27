@@ -16,8 +16,12 @@ public class SCCarController : Photon.PunBehaviour {
 
 	public List<AxleInfo> axleInfos; 
 	public float maxMotorTorque;
+	public float maxBrakeTorque;
+	public float reverseTorque;
+	public float brakeConstant = 2f;
 	public float maxSteeringAngle;
 	public float currentMotorTorque;
+	public float currentBrakeTorque;
 	public float currentSteeringAngle;
 	public float downForce = 1;
 	public float frictionStiffness = 0.5f;
@@ -33,7 +37,26 @@ public class SCCarController : Photon.PunBehaviour {
 	public void FixedUpdate()
 	{
 		if (photonView.isMine) {
-			currentMotorTorque = maxMotorTorque * Input.GetAxis ("Vertical");
+			float verticalAxis = Input.GetAxis ("Vertical");
+			if (verticalAxis < 0) {
+				if (Vector3.Dot (transform.InverseTransformVector (this.rigidBody.velocity), Vector3.forward) > 0) {
+					currentMotorTorque = 0;
+					currentBrakeTorque = -verticalAxis * maxBrakeTorque;
+				} else {
+					currentMotorTorque = verticalAxis * reverseTorque;
+					currentBrakeTorque = 0;
+				}
+			} else {
+				if (Vector3.Dot (transform.InverseTransformVector (this.rigidBody.velocity), Vector3.forward) > 0) {
+					currentMotorTorque = maxMotorTorque * verticalAxis;
+					currentBrakeTorque = 0;
+				} else {
+					currentMotorTorque = 0;
+					currentBrakeTorque = verticalAxis * maxBrakeTorque;
+				}
+			}
+
+//			currentMotorTorque = maxMotorTorque * Input.GetAxis ("Vertical");
 			currentSteeringAngle = maxSteeringAngle * Input.GetAxis ("Horizontal");
 		}
 
@@ -45,6 +68,9 @@ public class SCCarController : Photon.PunBehaviour {
 			if (axleInfo.motor) {
 				axleInfo.leftWheel.motorTorque = currentMotorTorque;
 				axleInfo.rightWheel.motorTorque = currentMotorTorque;
+
+				axleInfo.leftWheel.brakeTorque = currentBrakeTorque;
+				axleInfo.rightWheel.brakeTorque = currentBrakeTorque;
 			}
 			ApplyLocalPositionToVisuals(axleInfo.leftWheel);
 			ApplyLocalPositionToVisuals(axleInfo.rightWheel);
