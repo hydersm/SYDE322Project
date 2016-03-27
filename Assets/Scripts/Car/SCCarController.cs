@@ -108,6 +108,19 @@ public class SCCarController : Photon.PunBehaviour {
 
 	//to add more grip as speed increases
 	public void AddDownForce() {
+		foreach (AxleInfo axleInfo in axleInfos) {
+			WheelHit wheelhit;
+			axleInfo.leftWheel.GetGroundHit (out wheelhit);
+			if (wheelhit.normal == Vector3.zero) {
+				return;
+			}
+
+			axleInfo.rightWheel.GetGroundHit (out wheelhit);
+			if (wheelhit.normal == Vector3.zero) {
+				return;
+			}
+		}
+
 		rigidBody.AddForce (-transform.up * downForce * rigidBody.velocity.magnitude);
 	}
 
@@ -137,14 +150,14 @@ public class SCCarController : Photon.PunBehaviour {
 			if (wheelhit.normal == Vector3.zero) {
 				return;
 			}
-
-			if (Mathf.Abs(oldRotation - transform.eulerAngles.y) < 10f)
-			{
-				var turnadjust = (transform.eulerAngles.y - oldRotation) * steerHelper;
-				Quaternion velRotation = Quaternion.AngleAxis(turnadjust, Vector3.up);
-				rigidBody.velocity = velRotation * rigidBody.velocity;
-			}
-			oldRotation = transform.eulerAngles.y;
 		}
+
+		if (Mathf.Abs(oldRotation - transform.eulerAngles.y) < 10f)
+		{
+			var turnadjust = (transform.eulerAngles.y - oldRotation) * steerHelper;
+			Quaternion velRotation = Quaternion.AngleAxis(turnadjust, Vector3.up);
+			rigidBody.velocity = velRotation * rigidBody.velocity;
+		}
+		oldRotation = transform.eulerAngles.y;
 	}
 }

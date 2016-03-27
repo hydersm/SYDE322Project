@@ -14,7 +14,7 @@ public class SCCarCollision : MonoBehaviour {
 		Physics.IgnoreLayerCollision (8, 9);
 	}
 
-	void OnCollisionStay(Collision collisionInfo) {
+	void OnCollisionEnter(Collision collisionInfo) {
 
 		Dictionary<int, Vector3> collisionSums = new Dictionary<int, Vector3> ();
 		Dictionary<int, Collider> colliderDict = new Dictionary<int, Collider> ();
