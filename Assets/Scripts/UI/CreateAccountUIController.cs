@@ -52,6 +52,10 @@ public class CreateAccountUIController : MonoBehaviour {
 				SCNetworkManager.instance.account = JsonUtility.FromJson<SCAccount> (www.text);
 				SCSceneController.instance.LoadLevel ("MainMenuScene");
 			}
+		} else {
+			Debug.Log ("Acount Creation Failed!");
+			createButton.interactable = true;
+			createFailMessage.SetActive (true);
 		}
 	}
 }

@@ -23,7 +23,6 @@ public class SCNetworkManager : Photon.PunBehaviour {
 			DontDestroyOnLoad (gameObject);
 			instance = this;
 			isConnectedToMaster = false;
-			car = new SCCar ();
 		} else if (instance != this) {
 			Destroy (gameObject);
 		}
@@ -128,7 +127,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 
 		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
-		GameObject newCar = PhotonNetwork.Instantiate ("SCCar3", spawnPos, Quaternion.identity, 0);
+		GameObject newCar = PhotonNetwork.Instantiate ("SCCar" + car.model, spawnPos, Quaternion.identity, 0);
 
 	}
 }

@@ -27,11 +27,18 @@ public class SCCarController : Photon.PunBehaviour {
 	public float frictionStiffness = 0.5f;
 	public float steerHelper = 0.5f;
 
+	public Vector3 centerOfMassOffset = Vector3.zero;
+	private Vector3 origCenterOfMass = Vector3.zero;
+
 	private Rigidbody rigidBody;
 	private float oldRotation;
 
 	public void Start() {
 		rigidBody = GetComponent<Rigidbody> ();
+		origCenterOfMass = rigidBody.centerOfMass;
+		if (centerOfMassOffset.magnitude > 0) {
+			rigidBody.centerOfMass = origCenterOfMass + centerOfMassOffset;
+		}
 	}
 
 	public void FixedUpdate()
