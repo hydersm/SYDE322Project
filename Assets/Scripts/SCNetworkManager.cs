@@ -11,6 +11,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	public int sendRate = 30;
 	public SCCameraRootController mainCameraRootController;
 	public bool isConnectedToMaster;
+	public SCAccount account;
 
 	private bool createGame;
 	private string gameName;

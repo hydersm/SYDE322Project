@@ -6,8 +6,6 @@ public class SCSceneController : MonoBehaviour {
 
 	public static SCSceneController instance;
 
-	public string username;
-
 	public void Awake() {
 		if (instance == null) {
 			DontDestroyOnLoad (gameObject);

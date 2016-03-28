@@ -7,7 +7,7 @@ public class SCMainMenuUIController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		userNameTextBox.text = "User: " + SCSceneController.instance.username + "   ";
+		userNameTextBox.text = "User: " + SCNetworkManager.instance.account.name + "   ";
 	}
 	
 	public void CreateGameButtonPressed() {
