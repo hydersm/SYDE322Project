@@ -12,6 +12,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	public SCCameraRootController mainCameraRootController;
 	public bool isConnectedToMaster;
 	public SCAccount account;
+	public SCCar car;
 
 	private bool createGame;
 	private string gameName;
@@ -22,6 +23,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 			DontDestroyOnLoad (gameObject);
 			instance = this;
 			isConnectedToMaster = false;
+			car = new SCCar ();
 		} else if (instance != this) {
 			Destroy (gameObject);
 		}
@@ -80,7 +82,9 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	public override void OnReceivedRoomListUpdate() {
 		Debug.Log ("Photon Room Update Called!");
 		RoomInfo[] roomInfos = PhotonNetwork.GetRoomList ();
-		roomListCallback (roomInfos);
+		if (roomListCallback != null) {
+			roomListCallback (roomInfos);
+		}
 	}
 
 	public void JoinRoom(string roomName) {
@@ -99,27 +103,27 @@ public class SCNetworkManager : Photon.PunBehaviour {
 			PhotonNetwork.Disconnect ();
 		}
 
-		int randomColor = 0;
-		System.Random rnd = new System.Random ();
-
-		while (true) {
-			randomColor = rnd.Next (0, 6);
-			bool found = false;
-
-			foreach (PhotonPlayer player in PhotonNetwork.playerList) {
-				if (player != PhotonNetwork.player) {
-					found = (int)player.customProperties ["color"] == randomColor;	
-				}
-			}
-
-			if (!found) {
-				Debug.Log (string.Format("Found color: {0}", randomColor));
-				break;
-			}
-		}
+//		int randomColor = 0;
+//		System.Random rnd = new System.Random ();
+//
+//		while (true) {
+//			randomColor = rnd.Next (0, 6);
+//			bool found = false;
+//
+//			foreach (PhotonPlayer player in PhotonNetwork.playerList) {
+//				if (player != PhotonNetwork.player) {
+//					found = (int)player.customProperties ["color"] == randomColor;	
+//				}
+//			}
+//
+//			if (!found) {
+//				Debug.Log (string.Format("Found color: {0}", randomColor));
+//				break;
+//			}
+//		}
 
 		ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable ();
-		hash ["color"] = randomColor;
+		hash ["color"] = car.color;
 		PhotonNetwork.player.SetCustomProperties (hash);
 
 		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 50;

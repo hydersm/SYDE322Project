@@ -17,4 +17,8 @@ public class SCMainMenuUIController : MonoBehaviour {
 	public void JoinGameButtonPressed() {
 		SCSceneController.instance.LoadLevel ("JoinGameScene");
 	}
+
+	public void GarageButtonPressed() {
+		SCSceneController.instance.LoadLevel ("GarageScene");
+	}
 }
