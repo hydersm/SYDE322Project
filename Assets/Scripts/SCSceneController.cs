@@ -12,7 +12,7 @@ public class SCSceneController : MonoBehaviour {
 		if (instance == null) {
 			DontDestroyOnLoad (gameObject);
 			instance = this;
-		} else {
+		} else if (instance != this) {
 			Destroy (gameObject);
 		}
 	}

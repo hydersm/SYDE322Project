@@ -10,8 +10,11 @@ public class SCMainMenuUIController : MonoBehaviour {
 		userNameTextBox.text = "User: " + SCSceneController.instance.username + "   ";
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	public void CreateGameButtonPressed() {
+		SCSceneController.instance.LoadLevel ("CreateGameScene");
+	}
+
+	public void JoinGameButtonPressed() {
+		SCSceneController.instance.LoadLevel ("JoinGameScene");
 	}
 }

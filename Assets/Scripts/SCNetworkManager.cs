@@ -1,12 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Photon;
+using System;
 
 public class SCNetworkManager : Photon.PunBehaviour {
+
+	public static SCNetworkManager instance;
 
 	public string gameVersion = "1.0";
 	public int sendRate = 30;
 	public SCCameraRootController mainCameraRootController;
+	public bool isConnectedToMaster;
+
+	private bool createGame;
+	private string gameName;
+	private Action<RoomInfo[]> roomListCallback;
+
+	public void Awake() {
+		if (instance == null) {
+			DontDestroyOnLoad (gameObject);
+			instance = this;
+			isConnectedToMaster = false;
+		} else if (instance != this) {
+			Destroy (gameObject);
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -23,19 +41,55 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	public override void OnConnectedToMaster() {
 		Debug.Log ("Connected to Master.\n Joining Default Lobby.");
 		base.OnConnectedToMaster ();
-		PhotonNetwork.JoinLobby();
+		isConnectedToMaster = true;
+	}
+
+	public void JoinDefaultLobbyAndCreateGame(string name) {
+		createGame = true;
+		gameName = name;
+		PhotonNetwork.JoinLobby ();
+	}
+
+	public void JoinDefaultLobbyAndGetRoomList(Action<RoomInfo[]> callback) {
+		createGame = false;
+		roomListCallback = callback;
+		PhotonNetwork.JoinLobby ();
 	}
 
 	public override void OnJoinedLobby ()
 	{
 		Debug.Log ("Joined Lobby.\n Joining Random Room.");
 		base.OnJoinedLobby ();
-		PhotonNetwork.JoinRandomRoom ();
+
+		if (createGame) {
+//			RoomOptions roomOptions = new RoomOptions ();
+//			roomOptions.isVisible = true;
+//			roomOptions.isOpen = true;
+//			roomOptions.cleanupCacheOnLeave = true;
+//			roomOptions.maxPlayers = 6;
+//			roomOptions.
+
+			SCSceneController.instance.LoadLevel ("MainScene");
+//			PhotonNetwork.CreateRoom (gameName, roomOptions, TypedLobby.Default);
+			Debug.Log("gamename: " + gameName);
+			PhotonNetwork.CreateRoom(gameName);
+		}
+	}
+
+	public override void OnReceivedRoomListUpdate() {
+		Debug.Log ("Photon Room Update Called!");
+		RoomInfo[] roomInfos = PhotonNetwork.GetRoomList ();
+		roomListCallback (roomInfos);
+	}
+
+	public void JoinRoom(string roomName) {
+		SCSceneController.instance.LoadLevel ("MainScene");
+		PhotonNetwork.JoinRoom (roomName);
 	}
 
 	public void OnPhotonRandomJoinFailed() {
-		Debug.Log ("Random room join failed! Creating a new room.");
-		PhotonNetwork.CreateRoom (null);
+//		Debug.Log ("Random room join failed! Creating a new room.");
+//		PhotonNetwork.CreateRoom (null);
 	}
 
 	public override void OnJoinedRoom() {
@@ -67,14 +121,9 @@ public class SCNetworkManager : Photon.PunBehaviour {
 		hash ["color"] = randomColor;
 		PhotonNetwork.player.SetCustomProperties (hash);
 
-		Vector2 randPos = Random.insideUnitCircle * 50;
+		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
 		GameObject newCar = PhotonNetwork.Instantiate ("SCCar3", spawnPos, Quaternion.identity, 0);
 
-	}
-
-	public void OnDisable() {
-		Debug.Log ("Disconnecting from Photon.");
-		PhotonNetwork.Disconnect ();
 	}
 }
