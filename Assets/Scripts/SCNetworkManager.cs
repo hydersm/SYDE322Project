@@ -13,9 +13,11 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	public bool isConnectedToMaster;
 	public SCAccount account;
 	public SCCar car;
+	public bool canControlCar = false;
 
 	private bool createGame;
 	private string gameName;
+	private int numPlayers;
 	private Action<RoomInfo[]> roomListCallback;
 
 	public void Awake() {
@@ -41,14 +43,15 @@ public class SCNetworkManager : Photon.PunBehaviour {
 	}
 
 	public override void OnConnectedToMaster() {
-		Debug.Log ("Connected to Master.\n Joining Default Lobby.");
+		Debug.Log ("Connected to Master.");
 		base.OnConnectedToMaster ();
 		isConnectedToMaster = true;
 	}
 
-	public void JoinDefaultLobbyAndCreateGame(string name) {
+	public void JoinDefaultLobbyAndCreateGame(string name, int numberOfPlayers) {
 		createGame = true;
 		gameName = name;
+		this.numPlayers = numberOfPlayers;
 		PhotonNetwork.JoinLobby ();
 	}
 
@@ -64,17 +67,15 @@ public class SCNetworkManager : Photon.PunBehaviour {
 		base.OnJoinedLobby ();
 
 		if (createGame) {
-//			RoomOptions roomOptions = new RoomOptions ();
-//			roomOptions.isVisible = true;
-//			roomOptions.isOpen = true;
-//			roomOptions.cleanupCacheOnLeave = true;
-//			roomOptions.maxPlayers = 6;
-//			roomOptions.
+			RoomOptions roomOptions = new RoomOptions ();
+			roomOptions.isVisible = true;
+			roomOptions.isOpen = true;
+			roomOptions.cleanupCacheOnLeave = true;
+			roomOptions.maxPlayers = (byte) numPlayers;
 
 			SCSceneController.instance.LoadLevel ("MainScene");
-//			PhotonNetwork.CreateRoom (gameName, roomOptions, TypedLobby.Default);
-			Debug.Log("gamename: " + gameName);
-			PhotonNetwork.CreateRoom(gameName);
+			PhotonNetwork.CreateRoom (gameName, roomOptions, TypedLobby.Default);
+//			PhotonNetwork.CreateRoom(gameName);
 		}
 	}
 
@@ -98,36 +99,27 @@ public class SCNetworkManager : Photon.PunBehaviour {
 
 	public override void OnJoinedRoom() {
 
-		if (PhotonNetwork.playerList.Length > 6) {
-			PhotonNetwork.Disconnect ();
-		}
-
-//		int randomColor = 0;
-//		System.Random rnd = new System.Random ();
-//
-//		while (true) {
-//			randomColor = rnd.Next (0, 6);
-//			bool found = false;
-//
-//			foreach (PhotonPlayer player in PhotonNetwork.playerList) {
-//				if (player != PhotonNetwork.player) {
-//					found = (int)player.customProperties ["color"] == randomColor;	
-//				}
-//			}
-//
-//			if (!found) {
-//				Debug.Log (string.Format("Found color: {0}", randomColor));
-//				break;
-//			}
-//		}
+		canControlCar = false;
 
 		ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable ();
 		hash ["color"] = car.color;
+		hash ["name"] = account.name;
 		PhotonNetwork.player.SetCustomProperties (hash);
 
 		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 50;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
 		GameObject newCar = PhotonNetwork.Instantiate ("SCCar" + car.model, spawnPos, Quaternion.identity, 0);
 
+		PhotonNetwork.RaiseEvent (0, null, true, null);
+
+	}
+
+	public override void OnLeftRoom() {
+		Debug.Log ("left room");
+		PhotonNetwork.LeaveLobby ();
+	}
+
+	public override void OnLeftLobby() {
+		Debug.Log ("left lobby");
 	}
 }

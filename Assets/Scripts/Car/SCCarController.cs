@@ -43,7 +43,7 @@ public class SCCarController : Photon.PunBehaviour {
 
 	public void FixedUpdate()
 	{
-		if (photonView.isMine) {
+		if (photonView.isMine && SCNetworkManager.instance.canControlCar) {
 			float verticalAxis = Input.GetAxis ("Vertical");
 			if (verticalAxis < 0) {
 				if (Vector3.Dot (transform.InverseTransformVector (this.rigidBody.velocity), Vector3.forward) > 0) {

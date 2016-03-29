@@ -32,9 +32,6 @@ public class SCCarInit : Photon.PunBehaviour {
 					for (int j = 0; j < excludeMaterials.Length; j++) {
 						if (temp [i].ToString ().Substring(0, 8) == excludeMaterials [j].ToString ().Substring(0,8)) {
 							add = false;
-						} else {
-							Debug.Log ("a: " + temp [i].ToString ().Substring(0, 8));
-							Debug.Log ("b: " + excludeMaterials [j].ToString ().Substring(0,8));
 						}
 					}
 

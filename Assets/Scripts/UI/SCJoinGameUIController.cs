@@ -33,17 +33,19 @@ public class SCJoinGameUIController : MonoBehaviour {
 				Destroy (buttons [i]);
 			}
 		}
-
+			
 		buttons = new GameObject[roomInfos.Length];
 
 		for (int i = 0; i < roomInfos.Length; i++) {
-			buttons[i] = (GameObject) Instantiate(Resources.Load("GameListItem"));
-			buttons[i].transform.Find ("Text").gameObject.GetComponent<Text> ().text = roomInfos[i].name;
-			buttons[i].transform.SetParent (content);
-			int itemp = i;
-			buttons[i].GetComponent<Button>().onClick.AddListener(delegate {
-				buttonClicked(itemp);
-			});
+			if (roomInfos [i].playerCount < roomInfos[i].maxPlayers && roomInfos[i].open) {
+				buttons [i] = (GameObject)Instantiate (Resources.Load ("GameListItem"));
+				buttons [i].transform.Find ("Text").gameObject.GetComponent<Text> ().text = roomInfos [i].name + "(" + roomInfos [i].playerCount + "/" + roomInfos [i].maxPlayers + ")";
+				buttons [i].transform.SetParent (content);
+				int itemp = i;
+				buttons [i].GetComponent<Button> ().onClick.AddListener (delegate {
+					buttonClicked (itemp);
+				});
+			}
 		}
 
 		contentRect = content.GetComponent<RectTransform> ();
@@ -76,16 +78,18 @@ public class SCJoinGameUIController : MonoBehaviour {
 
 	public void JoinButtonPressed() {
 		if (activeButton >= 0) {
-			SCNetworkManager.instance.JoinRoom(buttons [activeButton].transform.Find ("Text").gameObject.GetComponent<Text> ().text);
+			SCNetworkManager.instance.JoinRoom(buttons [activeButton].transform.Find ("Text").gameObject.GetComponent<Text> ().text.Split('(')[0]);
 		}
 	}
 
 	void Update () {
 		if (buttons != null) {
 			for (int i = 0; i < buttons.Length; i++) {
-				RectTransform buttonRect = buttons [i].transform.GetComponent<RectTransform> ();
-				buttonRect.SetInsetAndSizeFromParentEdge (RectTransform.Edge.Top, i * 30f, 30f);
-				buttonRect.SetInsetAndSizeFromParentEdge (RectTransform.Edge.Left, 0, contentRect.rect.width);
+				if (buttons [i] != null) {
+					RectTransform buttonRect = buttons [i].transform.GetComponent<RectTransform> ();
+					buttonRect.SetInsetAndSizeFromParentEdge (RectTransform.Edge.Top, i * 30f, 30f);
+					buttonRect.SetInsetAndSizeFromParentEdge (RectTransform.Edge.Left, 0, contentRect.rect.width);
+				}
 			}
 		}
 	}
