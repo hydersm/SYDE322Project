@@ -38,7 +38,7 @@ public class SCMainSceneUi : Photon.PunBehaviour {
 			lastDotTime = Time.time;
 		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -49,6 +49,7 @@ public class SCMainSceneUi : Photon.PunBehaviour {
 	}
 
 	public void ExitButtonPressed(){
+		PhotonNetwork.RaiseEvent (3, null, true, null);
 		PhotonNetwork.LeaveRoom ();
 		SCSceneController.instance.LoadLevel ("MainMenuScene");
 	}
@@ -76,7 +77,7 @@ public class SCMainSceneUi : Photon.PunBehaviour {
 	}
 
 	public void PlayerLost(byte eventCode, object content, int senderid) {
-		if (eventCode == 1) {
+		if (eventCode == 1 || eventCode == 3) {
 			activePlayers--;
 			if (activePlayers == 1 && !loseScreen.activeSelf) {
 				StartCoroutine (ShowWinScreen ());
@@ -127,11 +128,13 @@ public class SCMainSceneUi : Photon.PunBehaviour {
 
 	public void ShowLoseScreen() {
 		activePlayers--;
+		winScreen.SetActive (false);
 		loseScreen.SetActive (true);
 		PhotonNetwork.RaiseEvent (1, null, true, null);
 	}
 
 	IEnumerator ShowWinScreen() {
+		loseScreen.SetActive (false);
 		winScreen.SetActive (true);
 		yield return new WaitForSeconds(3f);
 		PhotonNetwork.RaiseEvent (2, null, true, null);
