@@ -43,6 +43,9 @@ public class SCCarController : Photon.PunBehaviour {
 
 	public void FixedUpdate()
 	{
+		if (centerOfMassOffset.magnitude > 0) {
+			rigidBody.centerOfMass = origCenterOfMass + centerOfMassOffset;
+		}
 		if (photonView.isMine && SCNetworkManager.instance.canControlCar) {
 			float verticalAxis = Input.GetAxis ("Vertical");
 			if (verticalAxis < 0) {
