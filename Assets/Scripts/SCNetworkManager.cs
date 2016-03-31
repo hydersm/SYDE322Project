@@ -106,7 +106,7 @@ public class SCNetworkManager : Photon.PunBehaviour {
 		hash ["name"] = account.name;
 		PhotonNetwork.player.SetCustomProperties (hash);
 
-		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 4;
+		Vector2 randPos = UnityEngine.Random.insideUnitCircle * 20;
 		Vector3 spawnPos = new Vector3 (randPos.x, 1f, randPos.y);
 		GameObject newCar = PhotonNetwork.Instantiate ("SCCar" + car.model, spawnPos, Quaternion.identity, 0);
 
